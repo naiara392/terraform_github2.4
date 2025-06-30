@@ -1,0 +1,46 @@
+# Nombre del Workflow
+name: Terraform Validate
+
+# Eventos que disparan el Workflow
+on:
+  push: # Ejecutar en cada push a cualquier rama
+    branches:
+      - main # Puedes especificar solo la rama 'main' si lo prefieres
+  pull_request: # Opcional: Ejecutar en cada Pull Request
+    branches:
+      - main
+
+# Trabajos a ejecutar en el Workflow
+jobs:
+  validate:
+    # Define el sistema operativo del ejecutor (runner)
+    runs-on: ubuntu-latest
+
+    # Pasos a ejecutar en este trabajo
+    steps:
+      # Paso 1: Checkout del código del repositorio
+      # Usa la acción 'actions/checkout@v4' para clonar el repositorio
+      # Esto es necesario para que el runner tenga acceso a tus archivos Terraform.
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Paso 2: Configurar Terraform CLI
+      # Usa la acción 'hashicorp/setup-terraform@v3' para instalar Terraform CLI
+      # en el entorno del runner.
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.12.2 # Especifica una versión de Terraform, ej. 1.8.x
+
+      # Paso 3: Inicializar el directorio de trabajo de Terraform
+      # Esto es equivalente a 'terraform init'. Descarga los proveedores y módulos.
+      # ¡Importante! Aquí simularemos un proveedor de AWS que no necesita credenciales reales.
+      - name: Terraform Init
+        run: terraform init -backend=false # -backend=false: No necesitamos un backend de estado real para solo validar
+
+      # Paso 4: Validar la configuración de Terraform
+      # Ejecuta 'terraform validate'. Este comando solo verifica la sintaxis
+      # y la validez semántica del código (ej. nombres de recursos correctos,
+      # argumentos válidos, etc.). NO interactúa con la nube.
+      - name: Terraform Validate
+        run: terraform validate
