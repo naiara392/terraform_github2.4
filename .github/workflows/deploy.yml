@@ -28,7 +28,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.8.x # Asegúrate de que coincida con tu versión local
+          terraform_version: 1.12.2 # Asegúrate de que coincida con tu versión local
           # No necesitamos credenciales AWS reales aquí, ya que el main.tf
           # está configurado para LocalStack (localhost:4566).
           # Para una conexión real a AWS, se necesitaría configurar AWS_ACCESS_KEY_ID
