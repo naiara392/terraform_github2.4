@@ -1,0 +1,59 @@
+# Nombre del Workflow de Despliegue
+name: Terraform Deploy
+
+# Eventos que disparan el Workflow
+on:
+  push:
+    branches:
+      - main # Este workflow se ejecutará cuando se haga un push a la rama 'main'
+
+# Trabajos a ejecutar
+jobs:
+  deploy:
+    runs-on: ubuntu-latest # Ejecutor de Ubuntu
+
+    steps:
+      # Paso 1: Checkout del código del repositorio
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Paso 2: Configurar Terraform CLI
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.8.x # Asegúrate de que coincida con tu versión local
+          # No necesitamos credenciales AWS reales aquí, ya que el main.tf
+          # está configurado para LocalStack (localhost:4566).
+          # Para una conexión real a AWS, se necesitaría configurar AWS_ACCESS_KEY_ID
+          # y AWS_SECRET_ACCESS_KEY como secretos de GitHub.
+
+      # --- SIMULACIÓN DE DESPLIEGUE EN LOCALSTACK EN EL RUNNER ---
+      # Aquí, para que el `apply` pase en el runner de GitHub Actions,
+      # lo haremos "sin backend" y "sin conexión a un endpoint real".
+      # Esto es una SIMULACIÓN didáctica, no un despliegue real a tu LocalStack local.
+      # Para un despliegue real a LocalStack dentro del runner, se necesitaría
+      # un paso previo que levante LocalStack en Docker dentro del mismo runner.
+
+      # Paso 3: Inicializar el directorio de trabajo de Terraform
+      # Usamos '-backend=false' porque no hay un backend de estado real en GitHub Actions.
+      # También necesitamos asegurar que el provider de AWS no intente conectarse a un endpoint
+      # que no exista en el runner.
+      - name: Terraform Init
+        run: terraform init -backend=false
+
+      # Paso 4: Planificar los cambios de Terraform
+      # Genera un plan de ejecución de los cambios.
+      # Para que no falle al intentar conectar a localhost:4566 donde no hay LocalStack en el runner,
+      # en un escenario de CI/CD real se configuraría LocalStack para correr en el mismo runner,
+      # o se usarían mock providers/testing frameworks.
+      # Para este ejercicio, simplemente asumimos que el plan se generaría correctamente.
+      - name: Terraform Plan
+        run: terraform plan -no-color # -no-color para mejor legibilidad en los logs de CI
+
+      # Paso 5: Aplicar los cambios de Terraform
+      # Ejecuta los cambios definidos en el plan.
+      # IMPORTANTE: En un entorno de producción, este paso a menudo requiere aprobación manual
+      # o se ejecuta solo en ramas específicas (ej. 'main' o 'production') después de pruebas.
+      # Para este ejercicio didáctico, lo automatizamos.
+      - name: Terraform Apply
+        run: terraform apply -auto-approve # -auto-approve: aprueba automáticamente el plan. ¡Cuidado en producción!
