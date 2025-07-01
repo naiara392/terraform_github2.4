@@ -1,16 +1,16 @@
 # Configuración del proveedor de AWS
 provider "aws" {
   region                      = "us-east-1"
-  #access_key                  = "test" # Credenciales ficticias para LocalStack
-  #secret_key                  = "test" # Credenciales ficticias para LocalStack
+  access_key                  = "test" # Credenciales ficticias para LocalStack
+  secret_key                  = "test" # Credenciales ficticias para LocalStack
   s3_use_path_style           = true # Necesario para LocalStack con S3
   skip_credentials_validation = true
   skip_metadata_api_check     = true
   skip_requesting_account_id = true
   #endpoints {
-  #  s3 = "http://localhost:4566" # Endpoint de S3 de LocalStack
-  #  ec2  = "http://localhost:4566"
-  #}
+    s3 = "http://localhost:4566" # Endpoint de S3 de LocalStack
+    ec2  = "http://localhost:4566"
+  }
 }
 
 # Definición de un recurso: Bucket S3
