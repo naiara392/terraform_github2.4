@@ -13,10 +13,10 @@ jobs:
     runs-on: ubuntu-latest # Ejecutor de Ubuntu
     services:
       LocalStack:
-      image: localstack/localstack:2.3
-      ports:
-        - "4566:4566"
-      environment: # <--- Opcional, pero recomendable si necesitas servicios específicos
+       image: localstack/localstack:2.3
+       ports:
+          - "4566:4566"
+       environment: # <--- Opcional, pero recomendable si necesitas servicios específicos
           SERVICES: s3,ec2,sqs,lambda # Habilita los servicios necesarios para tu Terraform
           DEBUG: 1
     steps:
@@ -93,15 +93,4 @@ jobs:
           AWS_S3_USE_PATH_STYLE: "true"
           AWS_ENDPOINT_URL: "" # <-- Vacío
 
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
-        env:
-          AWS_ACCESS_KEY_ID: "mock_access_key"
-          AWS_SECRET_ACCESS_KEY: "mock_secret_key"
-          AWS_REGION: "us-east-1"
-          AWS_DEFAULT_REGION: "us-east-1"
-          AWS_SKIP_CREDENTIALS_VALIDATION: "true"
-          AWS_SKIP_METADATA_API_CHECK: "true"
-          AWS_SKIP_REGION_VALIDATION: "true"
-          AWS_S3_USE_PATH_STYLE: "true"
-          AWS_ENDPOINT_URL: "" 
+     
