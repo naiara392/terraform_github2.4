@@ -49,6 +49,23 @@ jobs:
       # Para este ejercicio, simplemente asumimos que el plan se generaría correctamente.
       - name: Terraform Plan
         run: terraform plan -no-color # -no-color para mejor legibilidad en los logs de CI
+        env:
+          # Estas variables de entorno le dicen al proveedor AWS que no intente contactar
+          # los servicios reales de AWS, y que "acepte" credenciales falsas.
+          # Esto es PURAMENTE para la simulación en CI/CD donde no hay LocalStack.
+          AWS_ACCESS_KEY_ID: "mock_access_key" # Credenciales de mentira
+          AWS_SECRET_ACCESS_KEY: "mock_secret_key"
+          AWS_REGION: "us-east-1"
+          AWS_DEFAULT_REGION: "us-east-1"
+          # Desactivar la detección de metadata, etc., si es necesario
+          AWS_SKIP_CREDENTIALS_VALIDATION: "true"
+          AWS_SKIP_METADATA_API_CHECK: "true"
+          AWS_SKIP_REGION_VALIDATION: "true" # Asegura que no valide la región
+          AWS_S3_USE_PATH_STYLE: "true" # Necesario para la compatibilidad con LocalStack (aunque no haya uno)
+          # IMPORTANTE: Desactivar los endpoints a localhost para que no falle.
+          # El proveedor verá esto y no intentará conectar a localhost.
+          AWS_ENDPOINT_URL: "" # <-- Asegúrate de que esto esté vacío o no definido para la simulación
+                               # Esto sobrescribe cualquier endpoint que se encuentre en main.tf para el runner.
 
       # Paso 5: Aplicar los cambios de Terraform
       # Ejecuta los cambios definidos en el plan.
@@ -57,3 +74,14 @@ jobs:
       # Para este ejercicio didáctico, lo automatizamos.
       - name: Terraform Apply
         run: terraform apply -auto-approve # -auto-approve: aprueba automáticamente el plan. ¡Cuidado en producción!
+        env:
+          # MISMO CONJUNTO DE VARIABLES DE ENTORNO QUE EN EL PLAN
+          AWS_ACCESS_KEY_ID: "mock_access_key"
+          AWS_SECRET_ACCESS_KEY: "mock_secret_key"
+          AWS_REGION: "us-east-1"
+          AWS_DEFAULT_REGION: "us-east-1"
+          AWS_SKIP_CREDENTIALS_VALIDATION: "true"
+          AWS_SKIP_METADATA_API_CHECK: "true"
+          AWS_SKIP_REGION_VALIDATION: "true"
+          AWS_S3_USE_PATH_STYLE: "true"
+          AWS_ENDPOINT_URL: "" # <-- Vacío
