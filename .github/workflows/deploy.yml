@@ -13,10 +13,10 @@ jobs:
     runs-on: ubuntu-latest # Ejecutor de Ubuntu
     services:
       LocalStack:
-       image: localstack/localstack:2.3
-       ports:
+        image: localstack/localstack:2.3
+        ports:
           - "4566:4566"
-       environment: # <--- Opcional, pero recomendable si necesitas servicios específicos
+        environment: # <--- Opcional, pero recomendable si necesitas servicios específicos
           SERVICES: s3,ec2,sqs,lambda # Habilita los servicios necesarios para tu Terraform
           DEBUG: 1
     steps:
