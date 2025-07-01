@@ -11,7 +11,11 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest # Ejecutor de Ubuntu
-
+    services:
+      LocalStack:
+      image: localstack/localstack:2.3
+      ports:
+        - "4566:4566"
     steps:
       # Paso 1: Checkout del código del repositorio
       - name: Checkout repository
